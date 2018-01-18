@@ -78,8 +78,8 @@
         unviewed-messages-count]])))
 
 (defn options-btn [chat-id]
-  (let [options [{:value        #(re-frame/dispatch [:remove-chat chat-id])
-                  :text         (i18n/label :t/delete-chat)
+  (let [options [{:action        #(re-frame/dispatch [:remove-chat chat-id])
+                  :label         (i18n/label :t/delete-chat)
                   :destructive? true}]]
     [react/view st/opts-btn-container
      [context-menu/context-menu

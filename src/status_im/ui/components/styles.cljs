@@ -159,6 +159,8 @@
   {:background-color color-white
    :flex             1})
 
+(def border-radius 8)
+
 ;; TODO(goranjovic): replace all platform conditional uppercase styling with a reference to this var
 (def uppercase?
   (condp = platform/platform

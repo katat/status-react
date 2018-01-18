@@ -34,13 +34,13 @@
             [status-im.ui.components.qr-code-viewer.views :as qr-code-viewer]
 
             [status-im.ui.screens.wallet.send.views :refer [send-transaction send-transaction-modal]]
-            [status-im.ui.screens.wallet.choose-recipient.views :refer [choose-recipient]]
             [status-im.ui.screens.wallet.request.views :refer [request-transaction]]
             [status-im.ui.screens.wallet.components.views :as wallet.components]
             [status-im.ui.screens.wallet.send.views :as wallet.send]
             [status-im.ui.screens.wallet.settings.views :as wallet-settings]
             [status-im.ui.screens.wallet.transactions.views :as wallet-transactions]
             [status-im.ui.screens.wallet.send.transaction-sent.views :refer [transaction-sent transaction-sent-modal]]
+            [status-im.ui.screens.wallet.components.views :refer [contact-code recent-recipients recipient-qr-code]]
             [status-im.ui.components.status-bar.view :as status-bar]
             [status-im.ui.screens.discover.search-results.views :as discover-search]
             [status-im.ui.screens.discover.recent-statuses.views :as discover-recent]
@@ -70,7 +70,6 @@
                           (:home :wallet :my-profile) main-tabs
                           :wallet-send-transaction send-transaction
                           :wallet-transaction-sent transaction-sent
-                          :choose-recipient choose-recipient
                           :wallet-request-transaction request-transaction
                           (:transactions-history :unsigned-transactions) wallet-transactions/transactions
                           :wallet-transaction-details wallet-transactions/transaction-details
@@ -105,6 +104,9 @@
                           :paste-json-text paste-json-text
                           :add-rpc-url add-rpc-url
                           :network-details network-details
+                          :recent-recipients recent-recipients
+                          :recipient-qr-code recipient-qr-code
+                          :contact-code contact-code
                           :qr-viewer qr-code-viewer/qr-viewer
                           (throw (str "Unknown view: " current-view)))]
           [(if android? menu-context view) common-styles/flex
@@ -113,7 +115,7 @@
             (when modal-view
               [view common-styles/modal
                [modal {:animation-type   :slide
-                       :transparent      false
+                       :transparent      true
                        :on-request-close #(dispatch [:navigate-back])}
                 (let [component (case modal-view
                                   :qr-scanner qr-scanner
