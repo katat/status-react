@@ -92,8 +92,7 @@
             show-bottom-info?               [:get-current-chat-ui-prop :show-bottom-info?]
             show-emoji?                     [:get-current-chat-ui-prop :show-emoji?]
             layout-height                   [:get :layout-height]]
-    {:component-did-mount    #(re-frame/dispatch [:check-and-open-dapp!])
-     :component-will-unmount #(re-frame/dispatch [:set-chat-ui-props {:show-emoji? false}])}
+    {:component-will-unmount #(re-frame/dispatch [:set-chat-ui-props {:show-emoji? false}])}
     [react/view {:style style/chat-view
                  :on-layout (fn [event]
                               (let [height (.. event -nativeEvent -layout -height)]
