@@ -3,14 +3,13 @@ from datetime import datetime
 
 
 @asyncio.coroutine
-def start_threads(amount, func, *args):
-    features = dict()
+def start_threads(quantity: int, func: type, returns: dict, *args):
     loop = asyncio.get_event_loop()
-    for i in range(amount):
-        features['feature_' + str(i)] = loop.run_in_executor(None, func, *args)
-    for k in features:
-        features[k] = yield from features[k]
-    return (features[k] for k in features)
+    for i in range(quantity):
+        returns[i] = loop.run_in_executor(None, func, *args)
+    for k in returns:
+        returns[k] = yield from returns[k]
+    return returns
 
 
 class TestData(object):
@@ -25,7 +24,9 @@ test_data = TestData()
 
 basic_user = {'password': "newuniquepassword12",
               'passphrase': "tree weekend ceiling awkward universe pyramid glimpse raven pair lounge grant grief",
-              'username': "Splendid Useless Racerunner"}
+              'username': "Splendid Useless Racerunner",
+              'public_key': "0x0448243ea6adfd2f825f083a02a1fea11e323a3ba32c9dc9992d3d465e932964"
+                            "38792f11380e14c6700f598e89bafaddd2579823f4273358f9f66828fcac7dd465"}
 
 transaction_users = {
                     'A_USER': {'password': "qwerty",

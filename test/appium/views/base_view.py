@@ -1,9 +1,12 @@
 import logging
 import time
+import base64
+import zbarlight
+from eth_keys import datatypes
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-
+from PIL import Image
 from datetime import datetime
-
+from io import BytesIO
 from views.base_element import BaseButton, BaseElement, BaseEditBox, BaseText
 
 
@@ -16,9 +19,9 @@ class BackButton(BaseButton):
         for _ in range(times_to_click):
             try:
                 self.find_element().click()
+                logging.info('Tap on %s' % self.name)
             except (NoSuchElementException, TimeoutException):
                 pass
-            logging.info('Tap on %s' % self.name)
         return self.navigate()
 
 
@@ -110,6 +113,13 @@ class NextButton(BaseButton):
             "//android.widget.TextView[@text='NEXT']")
 
 
+class DoneButton(BaseButton):
+    def __init__(self, driver):
+        super(DoneButton, self).__init__(driver)
+        self.locator = self.Locator.xpath_selector(
+            "//android.widget.TextView[@text='Done']")
+
+
 class AppsButton(BaseButton):
     def __init__(self, driver):
         super(AppsButton, self).__init__(driver)
@@ -141,6 +151,7 @@ class BaseView(object):
         self.ok_button_apk = OkButton(self.driver)
         self.next_button = NextButton(self.driver)
         self.save_button = SaveButton(self.driver)
+        self.done_button = DoneButton(self.driver)
 
         self.apps_button = AppsButton(self.driver)
         self.status_app_icon = StatusAppIcon(self.driver)
@@ -216,3 +227,15 @@ class BaseView(object):
 
     def get_unique_amount(self):
         return '0.0%s' % datetime.now().strftime('%-m%-d%-H%-M%-S').strip('0')
+
+    def get_text_from_qr(self):
+        image = Image.open(BytesIO(base64.b64decode(self.driver.get_screenshot_as_base64())))
+        image.load()
+        try:
+            return str(zbarlight.scan_codes('qrcode', image)[0])[2:][:132]
+        except IndexError:
+            raise BaseException('No data in QR code')
+
+    def public_key_to_address(self, public_key):
+        raw_public_key = bytearray.fromhex(public_key.replace('0x04', ''))
+        return datatypes.PublicKey(raw_public_key).to_address()[2:]

@@ -1,7 +1,7 @@
 import pytest
+from tests import transaction_users, transaction_users_wallet
 from tests.base_test_case import SingleDeviceTestCase
 from views.console_view import ConsoleView
-from tests import user_flow
 from tests import basic_user
 
 
@@ -18,7 +18,7 @@ class TestSanity(SingleDeviceTestCase):
                              {"input": "12345ewq",
                               "outcome": "Wrong password"}}
         console_view = ConsoleView(self.driver)
-        user_flow.create_user(console_view)
+        console_view.create_user()
         console_view.back_button.click()
         profile_view = console_view.profile_button.click()
         profile_view.logout_button.scroll_to_element()
@@ -56,33 +56,29 @@ class TestSanity(SingleDeviceTestCase):
             pytest.fail('Password in logcat!!!', pytrace=False)
 
     @pytest.mark.profile
-    def test_change_profile_name_and_status(self):
-        new_status = '#newstatus'
-        new_username = 'NewUserName!'
+    def test_change_user_name(self):
         console_view = ConsoleView(self.driver)
-        user_flow.create_user(console_view)
+        console_view.create_user()
         console_view.back_button.click()
         profile_view = console_view.profile_button.click()
-        profile_view.user_status_box.click()
-        profile_view.user_status_input.clear()
-        profile_view.user_status_input.send_keys(new_status)
-        profile_view.username_input.click()
+        profile_view.edit_button.click()
         profile_view.username_input.clear()
+        new_username = 'NewUserName!'
         profile_view.username_input.send_keys(new_username)
-        profile_view.save_button.click()
+        profile_view.confirm_button.click()
         sign_in_view = profile_view.logout_button.click()
         sign_in_view.first_account_button.click()
         sign_in_view.password_input.send_keys('qwerty1234')
         home_view = sign_in_view.sign_in_button.click()
         home_view.find_full_text('Wallet', 60)
         home_view.profile_button.click()
-        for text in new_status + ' ', new_username:
-            home_view.find_full_text(text, 5)
+        profile_view.edit_button.click()
+        profile_view.find_full_text(new_username, 5)
 
     @pytest.mark.recover
     def test_recover_access(self):
         console_view = ConsoleView(self.driver)
-        user_flow.create_user(console_view)
+        console_view.create_user()
         console_view.back_button.click()
         profile_view = console_view.profile_button.click()
         sign_in_view = profile_view.logout_button.click()
@@ -97,3 +93,55 @@ class TestSanity(SingleDeviceTestCase):
         console_view.find_full_text('Wallet', 60)
         if basic_user['password'] in str(console_view.logcat):
             pytest.fail('Password in logcat!!!', pytrace=False)
+
+    def test_group_chat_members(self):
+        console_view = ConsoleView(self.driver)
+        console_view.create_user()
+        console_view.back_button.click()
+        home_view = console_view.get_home_view()
+
+        users = [transaction_users_wallet['A_USER'], transaction_users_wallet['B_USER'],
+                 transaction_users['A_USER'], transaction_users['B_USER'], basic_user]
+        user_names = sorted([user['username'] for user in users])
+
+        for user in users:
+            home_view.add_contact(user['public_key'])
+            console_view.back_button.click(3)
+        home_view.create_group_chat(sorted([user['username'] for user in users]))
+        group_chat = home_view.get_chat_view()
+        group_chat.chat_options.click()
+        group_chat.chat_settings.click()
+        group_chat.confirm()
+        group_chat.more_users_button.click()
+        for username in user_names:
+            group_chat.find_full_text(username, 10)
+
+    def test_commands_on_second_app_run(self):
+        console_view = ConsoleView(self.driver)
+        console_view.create_user()
+        console_view.back_button.click()
+        home_view = console_view.get_home_view()
+        home_view.plus_button.click()
+        contact_jarrad = home_view.element_by_text('Jarrad', 'button')
+        contact_jarrad.scroll_to_element()
+        contact_jarrad.click()
+        chat_view = home_view.get_chat_view()
+
+        commands = '/browse', '/location', '/request', '/send'
+
+        for command in commands:
+            chat_view.find_full_text(command, 2)
+        self.driver.close_app()
+        console_view.apps_button.click()
+        console_view.status_app_icon.scroll_to_element()
+        console_view.status_app_icon.click()
+        console_view.ok_button_apk.click()
+        sign_in_view = console_view.get_sign_in_view()
+        sign_in_view.first_account_button.click()
+        sign_in_view.password_input.send_keys('qwerty1234')
+        sign_in_view.sign_in_button.click()
+        contact_jarrad.click()
+        for command in commands:
+            chat_view.find_full_text(command, 2)
+        chat_view.back_button.click()
+        home_view.create_group_chat(['Jarrad'])

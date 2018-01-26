@@ -50,12 +50,12 @@ class BaseElement(object):
 
     def scroll_to_element(self):
         action = TouchAction(self.driver)
-        for _ in range(5):
+        for _ in range(9):
             try:
                 return self.find_element()
             except NoSuchElementException:
-                self.info('Scrolling to %s' % self.name)
-                action.press(x=0, y=1000).move_to(x=200, y=-1000).release().perform()
+                self.info('Scrolling down to %s' % self.name)
+                self.driver.swipe(500, 1000, 500, 500)
 
     def is_element_present(self, sec=5):
         try:
