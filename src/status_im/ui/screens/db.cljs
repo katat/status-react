@@ -158,6 +158,7 @@
                   :qr/qr-modal
                   :qr/current-qr-context
                   :chat/chats
+                  :chat/deleted-chats
                   :chat/current-chat-id
                   :chat/chat-id
                   :chat/new-chat
@@ -174,6 +175,7 @@
                   :chat/public-group-topic
                   :chat/confirmation-code-sms-listener
                   :chat/messages
+                  :chat/not-loaded-message-ids
                   :chat/last-clock-value
                   :chat/loaded-chats
                   :chat/bot-db
