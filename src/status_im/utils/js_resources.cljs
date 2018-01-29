@@ -17,15 +17,12 @@
 
 (def browse-js (slurp-bot :browse))
 
-(def mailman-js (slurp-bot :mailman))
-
 (def demo-bot-js (slurp-bot :demo_bot))
 
 (def resources
   {:transactor-bot transactor-js
    :console-bot    console-js
    :browse-bot     browse-js
-   :mailman-bot    mailman-js
    :demo-bot       demo-bot-js})
 
 (defn get-resource [url]

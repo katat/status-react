@@ -11,18 +11,6 @@
         "unremovable?": true
     },
 
-    "mailman":
-    {
-        "name":
-        {
-            "en": "Mailman",
-            "ru": "Печкин"
-        },
-        "dapp?": true,
-        "hide-contact?": true,
-        "bot-url": "local://mailman-bot"
-    },
-
     "transactor":
     {
         "name":
