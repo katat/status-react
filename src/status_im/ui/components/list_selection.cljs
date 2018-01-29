@@ -35,7 +35,7 @@
                                       {:text (label :t/browsing-open-in-web-browser)}]
                         :callback    (fn [index]
                                        (case index
-                                         0 (re-frame/dispatch [:navigate-to :browser {:url link}])
+                                         0 (re-frame/dispatch [:open-browser {:url link}])
                                          1 (.openURL linking link)
                                          :default))
                         :cancel-text (label :t/browsing-cancel)})))
