@@ -46,19 +46,24 @@
    :align-items     :center
    :flex-direction  :row})
 
-(def toolbar-content
+(defnstyle toolbar-content [show-actions]
   {:flex-direction     :row
-   :margin-horizontal  12
+   :flex               1
    :border-radius      4
    :height             36
    :background-color   colors/light-gray
    :padding-horizontal 12
-   :align-items        :center})
+   :android            {:align-items    :flex-start
+                        :margin-left    (if show-actions 66 18)
+                        :padding-bottom 6}
+   :ios                {:align-items       :center
+                        :margin-horizontal 12}})
 
-(def url-input
+(defstyle url-input
   {:flex           1
    :font-size      14
-   :letter-spacing -0.2})
+   :letter-spacing -0.2
+   :android        {:padding 0}})
 
 (def toolbar-content-dapp
   {:flex-direction    :row

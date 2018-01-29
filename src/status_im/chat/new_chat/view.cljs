@@ -33,12 +33,16 @@
    [action-button {:label     (i18n/label :t/open-url)
                    :icon      :icons/address
                    :icon-opts {:color :blue}
-                   :on-press  #(dispatch [:navigate-to :browser])}]])
+                   :on-press  #(do
+                                 (dispatch [:navigate-to-clean :home])
+                                 (dispatch [:navigate-to :browser]))}]])
 
 (defn contact-list-row [{:keys [dapp-url] :as contact}]
   [contact-view {:contact  contact
                  :on-press #(if dapp-url
-                              (dispatch [:open-dapp-in-browser contact])
+                              (do
+                                (dispatch [:navigate-to-clean :home])
+                                (dispatch [:open-dapp-in-browser contact]))
                               (dispatch [:open-chat-with-contact %]))}])
 
 (defview new-chat-toolbar []
