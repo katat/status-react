@@ -6,6 +6,7 @@
             [status-im.ui.components.status-bar.view :as status-bar]
             [status-im.ui.components.toolbar.view :as toolbar.view]
             [status-im.chat.views.toolbar-content :as toolbar-content]
+            [status-im.ui.components.toolbar.actions :as toolbar.actions]
             [status-im.ui.components.webview-bridge :as components.webview-bridge]
             [status-im.utils.js-resources :as js-res]
             [status-im.ui.components.react :as components]
@@ -34,7 +35,7 @@
     [react/view styles/toolbar-content
      [react/text-input {:on-change-text    #(reset! url-text %)
                         :on-submit-editing #(re-frame/dispatch [:update-browser (assoc browser :url (match-url @url-text))])
-                        :auto-focus        true
+                        :auto-focus        (not url)
                         :placeholder       (i18n/label :t/enter-url)
                         :default-value     url
                         :style             styles/url-input}]
@@ -68,7 +69,7 @@
     [react/keyboard-avoiding-view styles/browser
      [status-bar/status-bar]
      [toolbar.view/toolbar {}
-      toolbar.view/default-nav-back
+      [toolbar.view/nav-button (toolbar.actions/back #(re-frame/dispatch [:navigate-to-clean :home]))]
       (if dapp?
         [toolbar-content-dapp contact]
         [toolbar-content browser])]
